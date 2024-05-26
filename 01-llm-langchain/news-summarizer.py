@@ -2,6 +2,8 @@ import json
 import os
 import requests
 from newspaper import Article
+from langchain.chat_models import ChatOpenAI
+
 
 from langchain.schema import (
     HumanMessage
@@ -60,3 +62,52 @@ Write a summary of the previous article.
 prompt = template.format(article_title=article.title, article_text=article.text)
 
 messages = [HumanMessage(content=prompt)]
+
+# load the model
+chat = ChatOpenAI(model_name="gpt-4", temperature=0)
+
+# generate summary
+summary = chat(messages)
+print(summary.content)
+
+# prepare template for prompt
+template = """You are an advanced AI assistant that summarizes online articles into bulleted lists.
+
+Here's the article you need to summarize.
+
+==================
+Title: {article_title}
+
+{article_text}
+==================
+
+Now, provide a summarized version of the article in a bulleted list format.
+"""
+
+# format prompt
+prompt = template.format(article_title=article.title, article_text=article.text)
+
+# generate summary
+summarybullet = chat([HumanMessage(content=prompt)])
+print(summarybullet.content)
+
+# prepare template for prompt
+template = """You are an advanced AI assistant that summarizes online articles into bulleted lists in French.
+
+Here's the article you need to summarize.
+
+==================
+Title: {article_title}
+
+{article_text}
+==================
+
+Now, provide a summarized version of the article in a bulleted list format, in French.
+"""
+
+# format prompt
+prompt = template.format(article_title=article.title, article_text=article.text)
+
+# generate summary
+summaryfrench = chat([HumanMessage(content=prompt)])
+print(summaryfrench.content)
