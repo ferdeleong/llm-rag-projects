@@ -3,6 +3,10 @@ import os
 import requests
 from newspaper import Article
 
+from langchain.schema import (
+    HumanMessage
+)
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -34,3 +38,25 @@ try:
         print(f"Failed to fetch article at {article_url}")
 except Exception as e:
     print(f"Error occurred while fetching article at {article_url}: {e}")
+
+# we get the article data from the scraping part
+article_title = article.title
+article_text = article.text
+
+# prepare template for prompt
+template = """You are a very good assistant that summarizes online articles.
+
+Here's the article you want to summarize.
+
+==================
+Title: {article_title}
+
+{article_text}
+==================
+
+Write a summary of the previous article.
+"""
+
+prompt = template.format(article_title=article.title, article_text=article.text)
+
+messages = [HumanMessage(content=prompt)]
